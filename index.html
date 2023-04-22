@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Chatbot Example</title>
+	<link rel="stylesheet" type="text/css" href="/static/style.css">
+</head>
+<body>
+	<div class="container" style="display: none;">
+		<div id="chat-title">
+			<span id="chatbot-title">Photography Chatbot</span>
+            <div id ="chatbot-description">Explore photography with our experimental AI chatbot. Ask questions and get help from our assistant.</div>
+			<span id="close-btn" onclick="toggleChat()">&#x25f3;</span>
+		</div>
+		<div class="chat" id="chat">
+		</div>
+		<div class="input">
+			<input type="text" id="user-input" placeholder="Type your message here...">
+			<input type="submit" value="Send" onclick="sendMessage()">
+		</div>
+	</div>
+	<div id="minimized-chat" onclick="toggleChat()">
+		<div id="minimized-chat-title">Photography Chatbot</div>
+	</div>
+	<script type="text/javascript" src="/static/script.js"></script>
+</body>
+</html>
