@@ -26,7 +26,6 @@ function displayMessage(role, content) {
 }
 
 
-
 function sendMessage() {
     var message = userInput.value;
     userInput.value = "";
@@ -39,6 +38,19 @@ function sendMessage() {
     const typingDots = createMessage('bot', '...');
     chat.appendChild(typingDots);
     chat.scrollTop = chat.scrollHeight;
+
+    var count = 0;
+    var intervalId = setInterval(function() {
+        if (count % 3 === 0) {
+            typingDots.textContent = ".";
+        } else if (count % 3 === 1) {
+            typingDots.textContent = "..";
+        } else {
+            typingDots.textContent = "...";
+        }
+        count++;
+    }, 600);
+
 
     // Generate a unique user ID or retrieve an existing one
     var userId = window.sessionStorage.getItem('userId');
@@ -54,6 +66,7 @@ function sendMessage() {
             var response = JSON.parse(this.responseText);
 
             // Remove typing dots and display bot's response
+            clearInterval(intervalId);
             typingDots.remove();
             displayMessage('bot', response.answer);
         }
@@ -64,15 +77,20 @@ function sendMessage() {
 }
 
 
-
+let firstTimeOpening = true;
 function toggleChat() {
     var chat = document.getElementById("chat");
     var chatbox = document.querySelector(".container");
     var minimize = document.getElementById("minimized-chat");
+    //opening it
     if (chatbox.style.display === "none") {
         chatbox.style.display = "flex";
         minimize.style.display = "none";
-    } else {
+        if (firstTimeOpening) {
+            firstTimeOpening = false;
+            displayMessage('bot', 'Welcome to our experimental AI chatbot! Our assistant is here to aid you with any photography-related questions you may have. As an experimental system, our chatbot may occasionally generate incorrect information, but we are continually working to improve its accuracy. Please feel free to ask us anything!');
+        }
+    } else {//closing it
         chatbox.style.display = "none";
         minimize.style.display = "flex";
     }
