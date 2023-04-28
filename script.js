@@ -73,7 +73,13 @@ function sendMessage() {
     };
     xmlhttp.open("POST", "/chat", true);
     xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    xmlhttp.send(JSON.stringify({ user_id: userId, user_input: message }));
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    let web_token = urlParams.get('token');
+    if (web_token === null) {
+        web_token = 'noneProvided'
+    }
+    xmlhttp.send(JSON.stringify({ user_id: userId, user_input: message , token:web_token}));
 }
 
 
@@ -88,7 +94,7 @@ function toggleChat() {
         minimize.style.display = "none";
         if (firstTimeOpening) {
             firstTimeOpening = false;
-            displayMessage('bot', 'Welcome to our experimental AI chatbot! Our assistant is here to aid you with any photography-related questions you may have. As an experimental system, our chatbot may occasionally generate incorrect information, but we are continually working to improve its accuracy. Please feel free to ask us anything!');
+            displayMessage('bot', "Try our AI chatbot for any related questions you may have. It's experimental, so please keep in mind that some information may be incorrect.");
         }
     } else {//closing it
         chatbox.style.display = "none";
