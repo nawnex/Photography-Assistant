@@ -1,105 +1,155 @@
-const chat = document.getElementById('chat');
-const userInput = document.getElementById('user-input');
-let conversation = [];
-
-
-userInput.addEventListener('keypress', handleKeyPress);
-
-function handleKeyPress(event) {
-    if (event.keyCode === 13) {
-    event.preventDefault();
-    sendMessage();
-    }
-}
-
-function createMessage(role, content) {
-    const message = document.createElement('div');
-    message.className = 'message ' + role + '-message';
-    message.textContent = content;
-    return message;
-}
-
-function displayMessage(role, content) {
-    const message = createMessage(role, content);
-    chat.appendChild(message);
-    chat.scrollTop = chat.scrollHeight;
+.container {
+    background-color: #f5f5f5;
+    border: 2px solid black;
+    border-radius: 5px;
+    padding: 3px;
+    margin: 10px;
+    width: 300px;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
 }
 
 
-function sendMessage() {
-    var message = userInput.value;
-    userInput.value = "";
+.container .chat {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin-top: 3px;
+    overflow-y: scroll;
+}
 
-    const userMessage = createMessage('user', message);
-    chat.appendChild(userMessage);
-    chat.scrollTop = chat.scrollHeight;
+.container .chat .message {
+    margin: 5px;
+    padding: 8px;
+    border: 1px solid #f5f5f5;
+    border-radius: 15px;
+    max-width: 70%;
+    word-wrap: break-word;
+}
 
-    // Display typing dots
-    const typingDots = createMessage('bot', '...');
-    chat.appendChild(typingDots);
-    chat.scrollTop = chat.scrollHeight;
+.container .chat .user-message {
+    align-self: flex-end;
+    background-image: linear-gradient(to right bottom, #00a54d, #FCEE21);
+    color: white;
+}
 
-    var count = 0;
-    var intervalId = setInterval(function() {
-        if (count % 3 === 0) {
-            typingDots.textContent = ".";
-        } else if (count % 3 === 1) {
-            typingDots.textContent = "..";
-        } else {
-            typingDots.textContent = "...";
-        }
-        count++;
-    }, 600);
+.container .chat .bot-message {
+    align-self: flex-start;
+    background-image: linear-gradient(to right bottom, #EA8D8D, #A890FE);
+    color: white;
+}
 
+.container .input {
+    display: flex;
+    height: 30px;
+    flex-shrink: 0;
+}
 
-    // Generate a unique user ID or retrieve an existing one
-    var userId = window.sessionStorage.getItem('userId');
-    if (!userId) {
-        userId = Math.random().toString(36).substr(2, 9);
-        window.sessionStorage.setItem('userId', userId);
-    }
+.container .input input[type="text"] {
+    flex-grow: 1;
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    margin-right: 10px;
+    font-size: 16px;
+    border: 1px solid #dbdbdb;
+    border-radius: 7px;
+}
 
-    // Send the user message and ID to the server
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            var response = JSON.parse(this.responseText);
+.container .input input[type="submit"] {
+    background-color: #0095ff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
 
-            // Remove typing dots and display bot's response
-            clearInterval(intervalId);
-            typingDots.remove();
-            displayMessage('bot', response.answer);
-        }
-    };
-    xmlhttp.open("POST", "/chat", true);
-    xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    let web_token = urlParams.get('token');
-    if (web_token === null) {
-        web_token = 'noneProvided'
-    }
-    xmlhttp.send(JSON.stringify({ user_id: userId, user_input: message , token:web_token}));
+.container .input input[type="submit"]:hover {
+    background-color: #0066cc;
+}
+
+.container::-webkit-scrollbar {
+        width: 8px;
+}
+
+.container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+}
+
+.container::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 5px;
+}
+
+.container::-webkit-scrollbar-thumb:hover {
+        background: #555;
+}
+
+#minimized-chat {
+  width: 64px;
+  height: 64px;
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  background-color: #605E5E;
+  color: white;
+  border-radius: 5px;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
 
-let firstTimeOpening = true;
-function toggleChat() {
-    var chat = document.getElementById("chat");
-    var chatbox = document.querySelector(".container");
-    var minimize = document.getElementById("minimized-chat");
-    //opening it
-    if (chatbox.style.display === "none") {
-        chatbox.style.display = "flex";
-        minimize.style.display = "none";
-        if (firstTimeOpening) {
-            firstTimeOpening = false;
-            displayMessage('bot', "Try our AI chatbot for any related questions you may have. It's experimental, so please keep in mind that some information may be incorrect.");
-        }
-    } else {//closing it
-        chatbox.style.display = "none";
-        minimize.style.display = "flex";
-    }
-    chat.scrollTop = chat.scrollHeight;
-    document.getElementById("user-input").focus();
+#minimized-chat:hover {
+  opacity: 0.8;
+}
+
+#minimized-chat:hover #expand-btn {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 2px;
+  padding: 5px;
+}
+
+#close-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 25px;
+    height: 25px;
+    font-size: 18px;
+    cursor: pointer;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+
+#chatbot-description {
+    margin-top: 5px;
+    font-family: Helvetica;
+    font-size: 13px;
+    color: white;
+  }
+
+#chat-title {
+    background-image: linear-gradient(to right bottom, #6b2cff, #9060ff);
+    height: 65px;
+    margin: -3Px;
+    padding: 7px;
+}
+
+#chatbot-title {
+    font-family: Helvetica;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
 }
